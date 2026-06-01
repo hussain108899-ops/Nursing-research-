@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Developer – NRIF 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--teal:#0a6e72;--teal-l:#14a8ad;--gold:#c49a2a;--gold-l:#f0c84e;--dark:#0d1f22;--mid:#1e3a3f;--text:#f4f0ea;--muted:#a8bfc1;--bg2:#0f2629;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+
+    .page-bg {
+      position:fixed;inset:0;
+      background:
+        radial-gradient(ellipse 60% 60% at 30% 40%, rgba(10,110,114,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 70% 70%, rgba(196,154,42,0.08) 0%, transparent 60%),
+        var(--dark);
+      z-index:0;
+    }
+    .grid-bg {
+      position:fixed;inset:0;z-index:0;
+      background-image:linear-gradient(rgba(20,168,173,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(20,168,173,0.04) 1px,transparent 1px);
+      background-size:50px 50px;
+    }
+
+    .card {
+      position:relative;z-index:1;
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(20,168,173,0.2);
+      border-radius:24px;
+      padding:52px 48px;
+      max-width:520px;
+      width:100%;
+      text-align:center;
+      animation:fadeUp 0.7s ease both;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+    .dev-photo-wrap {
+      width:120px;height:120px;border-radius:50%;
+      background:linear-gradient(135deg,var(--teal),var(--gold));
+      margin:0 auto 24px;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Playfair Display',serif;font-size:2.5rem;color:white;font-weight:700;
+      border:3px solid rgba(20,168,173,0.3);
+      overflow:hidden;position:relative;
+    }
+
+    .dev-tag{display:inline-block;background:rgba(196,154,42,0.12);border:1px solid var(--gold);color:var(--gold-l);font-size:0.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:100px;margin-bottom:16px;}
+    .dev-name{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:white;margin-bottom:6px;}
+    .dev-role{color:var(--teal-l);font-size:0.95rem;font-weight:500;margin-bottom:20px;}
+    .dev-bio{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:28px;}
+
+    .edit-input{
+      width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px;padding:10px 14px;color:white;font-family:'DM Sans',sans-serif;
+      font-size:0.88rem;outline:none;margin-bottom:12px;text-align:center;
+    }
+    .edit-textarea{min-height:80px;resize:vertical;}
+
+    .dev-links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;}
+    .dev-link{
+      background:rgba(10,110,114,0.15);border:1px solid rgba(20,168,173,0.25);
+      color:var(--teal-l);padding:9px 20px;border-radius:100px;
+      font-size:0.82rem;font-weight:500;text-decoration:none;
+      transition:all 0.2s;display:flex;align-items:center;gap:6px;
+    }
+    .dev-link:hover{background:rgba(10,110,114,0.3);border-color:var(--teal-l);transform:translateY(-2px);}
+
+    .btn-edit{background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--muted);padding:8px 20px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;transition:all 0.2s;margin-right:8px;}
+    .btn-edit:hover{border-color:var(--teal-l);color:var(--teal-l);}
+    .btn-save{background:var(--teal);color:white;border:none;padding:9px 24px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;}
+    .btn-save:hover{background:var(--teal-l);color:var(--dark);}
+
+    .divider{width:40px;height:2px;background:linear-gradient(90deg,var(--teal-l),var(--gold));border-radius:2px;margin:0 auto 28px;}
+    .back-link{position:fixed;top:20px;left:20px;color:var(--muted);text-decoration:none;font-size:0.82rem;z-index:10;}
+    .back-link:hover{color:var(--teal-l);}
+    #toast{position:fixed;bottom:20px;right:20px;background:rgba(13,31,34,0.97);border:1px solid rgba(20,168,173,0.3);color:var(--teal-l);padding:10px 20px;border-radius:100px;font-size:0.8rem;z-index:9999;display:none;}
+
+    .view-mode .edit-input,.view-mode .edit-textarea{display:none;}
+    .view-mode .display-text{display:block;}
+    .edit-mode .edit-input,.edit-mode .edit-textarea{display:block;}
+    .edit-mode .display-text{display:none;}
+    .display-text{display:none;}
+  </style>
+</head>
+<body>
+<div class="page-bg"></div>
+<div class="grid-bg"></div>
+
+<a href="index.html" class="back-link">← Back to Site</a>
+
+<div class="card view-mode" id="devCard">
+  <div class="dev-photo-wrap">
+    <span id="devPhotoInitials">HA</span>
+  </div>
+
+  <div class="dev-tag">Website Developer</div>
+
+  <div class="dev-name display-text" id="devNameDisplay">Hussain Ali Al Nasser</div>
+  <input class="edit-input" id="devNameInput" placeholder="Your Name" value="Hussain Ali Al Nasser"/>
+
+  <div class="dev-role display-text" id="devRoleDisplay">Lead Developer & Club President</div>
+  <input class="edit-input" id="devRoleInput" placeholder="Your Role" value="Lead Developer & Club President"/>
+
+  <div class="divider"></div>
+
+  <div class="dev-bio display-text" id="devBioDisplay">Nursing student and developer passionate about creating digital healthcare solutions and interactive web applications.</div>
+  <textarea class="edit-input edit-textarea" id="devBioInput" placeholder="Write a short bio...">Nursing student and developer passionate about creating digital healthcare solutions and interactive web applications.</textarea>
+
+  <div class="dev-links" id="devLinks">
+    <a href="mailto:developer@example.com" class="dev-link" id="linkEmail">✉ Email</a>
+    <a href="#" class="dev-link" id="linkLinkedIn">in LinkedIn</a>
+  </div>
+
+  <div class="edit-mode" style="display:none;" id="linkInputs">
+    <input class="edit-input" id="emailInput" placeholder="Email address" type="email" value="developer@example.com"/>
+    <input class="edit-input" id="linkedInInput" placeholder="LinkedIn URL" type="url" value="#"/>
+  </div>
+
+  <div id="viewBtns">
+    <button class="btn-edit" onclick="toggleEdit()">✏ Edit Profile</button>
+  </div>
+  <div id="editBtns" style="display:none;">
+    <button class="btn-edit" onclick="cancelEdit()">Cancel</button>
+    <button class="btn-save" onclick="saveAll()">💾 Save</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbvGRvon0z2MbVJwLhfJvCl1XOv8rk3Oa_25cv8swh3QwZRfOSl7XuiLgv1N_TKbACaQbA/exec";
+
+window.addEventListener('load', () => {
+  // جلب بيانات المطور المسجلة من جدول الإعدادات أونلاين
+  fetch(SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+      if(data.settings) {
+        if(data.settings.devName) { document.getElementById('devNameDisplay').textContent = data.settings.devName; document.getElementById('devNameInput').value = data.settings.devName; }
+        if(data.settings.devRole) { document.getElementById('devRoleDisplay').textContent = data.settings.devRole; document.getElementById('devRoleInput').value = data.settings.devRole; }
+        if(data.settings.devBio)  { document.getElementById('devBioDisplay').textContent = data.settings.devBio;  document.getElementById('devBioInput').value = data.settings.devBio; }
+        if(data.settings.devEmail) { document.getElementById('linkEmail').href = 'mailto:'+data.settings.devEmail; document.getElementById('emailInput').value = data.settings.devEmail; }
+        if(data.settings.devLink)  { document.getElementById('linkLinkedIn').href = data.settings.devLink; document.getElementById('linkedInInput').value = data.settings.devLink; }
+        updateInitials(data.settings.devName || "HA");
+      }
+    });
+});
+
+function toggleEdit() {
+  document.getElementById('devCard').className = 'card edit-mode';
+  document.getElementById('viewBtns').style.display = 'none';
+  document.getElementById('editBtns').style.display = 'block';
+  document.getElementById('linkInputs').style.display = 'block';
+  document.getElementById('devLinks').style.display = 'none';
+}
+
+function cancelEdit() {
+  document.getElementById('devCard').className = 'card view-mode';
+  document.getElementById('viewBtns').style.display = 'block';
+  document.getElementById('editBtns').style.display = 'none';
+  document.getElementById('linkInputs').style.display = 'none';
+  document.getElementById('devLinks').style.display = 'flex';
+}
+
+function saveAll() {
+  const name = document.getElementById('devNameInput').value.trim();
+  const role = document.getElementById('devRoleInput').value.trim();
+  const bio  = document.getElementById('devBioInput').value.trim();
+  const email = document.getElementById('emailInput').value.trim();
+  const link = document.getElementById('linkedInInput').value.trim();
+
+  showToast('⏳ Syncing profile...');
+  
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      action: 'updateContent',
+      settings: { devName: name, devRole: role, devBio: bio, devEmail: email, devLink: link }
+    })
+  }).then(() => {
+    document.getElementById('devNameDisplay').textContent = name;
+    document.getElementById('devRoleDisplay').textContent = role;
+    document.getElementById('devBioDisplay').textContent  = bio;
+    document.getElementById('linkEmail').href = 'mailto:'+email;
+    document.getElementById('linkLinkedIn').href = link;
+    updateInitials(name);
+    cancelEdit();
+    showToast('✅ Profile saved online!');
+  });
+}
+
+function updateInitials(name) {
+  const parts = name.split(' ');
+  const initials = parts.map(p=>p[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('devPhotoInitials').textContent = initials || "HA";
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(()=>t.style.display='none', 2500);
+}
+</script>
+</body>
+</html>

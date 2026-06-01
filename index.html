@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NRIF 2026 – Nursing Research & Innovation Forum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:#0a6e72; --teal-l:#14a8ad; --gold:#c49a2a; --gold-l:#f0c84e;
+      --dark:#0d1f22; --mid:#1e3a3f; --text:#f4f0ea; --muted:#a8bfc1;
+      --bg2:#0f2629; --success:#3abf6e; --danger:#e05252;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden;}
+
+    /* ── FLOATING MENU BUTTON ── */
+    .fab-menu {
+      position:fixed; top:20px; right:20px; z-index:1000;
+      width:48px; height:48px; border-radius:50%;
+      background:var(--teal); border:none; cursor:pointer;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+      box-shadow:0 4px 20px rgba(10,110,114,0.5);
+      transition:all 0.3s;
+    }
+    .fab-menu span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all 0.3s;}
+    .fab-menu.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+    .fab-menu.open span:nth-child(2){opacity:0;}
+    .fab-menu.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+    .fab-menu.open{background:var(--gold);}
+
+    /* ── FLOATING NAV PANEL ── */
+    .float-nav {
+      position:fixed; top:80px; right:20px; z-index:999;
+      background:rgba(13,31,34,0.70);
+      border:1px solid rgba(20,168,173,0.25);
+      border-radius:16px; padding:8px;
+      min-width:200px;
+      box-shadow:0 8px 40px rgba(0,0,0,0.5);
+      backdrop-filter:blur(16px);
+      transform:translateY(-10px) scale(0.95);
+      opacity:0; pointer-events:none;
+      transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    .float-nav.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all;}
+    .float-nav a {
+      display:flex;align-items:center;gap:10px;
+      padding:10px 14px; border-radius:10px;
+      color:var(--muted); text-decoration:none; font-size:0.88rem; font-weight:500;
+      transition:all 0.15s;
+    }
+    .float-nav a:hover{background:rgba(20,168,173,0.1);color:var(--teal-l);}
+    .float-nav a .nav-icon{font-size:1rem;width:20px;text-align:center;}
+    .float-nav .nav-divider{height:1px;background:rgba(255,255,255,0.07);margin:4px 8px;}
+    .float-nav .nav-register {
+      background:var(--teal);color:white!important;
+      margin-top:4px;justify-content:center;font-weight:600;
+    }
+    .float-nav .nav-register:hover{background:var(--teal-l);color:var(--dark)!important;}
+    .float-nav .nav-admin{color:var(--gold-l)!important;font-size:0.78rem;}
+
+    /* ── SECTIONS ── */
+    .page-section{display:none;}
+    .page-section.active{display:block;}
+    section{padding:90px 24px;}
+    .container{max-width:1100px;margin:0 auto;}
+    .section-tag{font-size:0.72rem;text-transform:uppercase;letter-spacing:2px;color:var(--teal-l);font-weight:600;margin-bottom:12px;}
+    .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;color:white;margin-bottom:16px;}
+    .section-sub{color:var(--muted);font-size:1.05rem;max-width:660px;line-height:1.7;}
+    .divider{width:48px;height:3px;background:linear-gradient(90deg,var(--teal-l),var(--gold));border-radius:2px;margin:20px 0 40px;}
+
+    /* ── HERO ── */
+    #home{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden;}
+    .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(10,110,114,0.25) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 80%,rgba(196,154,42,0.1) 0%,transparent 60%),var(--dark);background-size:cover;background-position:center;transition:all 0.3s;}
+    .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(20,168,173,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(20,168,173,0.06) 1px,transparent 1px);background-size:60px 60px;}
+    .hero-content{position:relative;z-index:1;max-width:860px;}
+    .hero-tag{display:inline-block;background:rgba(196,154,42,0.15);border:1px solid var(--gold);color:var(--gold-l);font-size:0.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:28px;}
+    .hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,6vw,5rem);font-weight:900;line-height:1.1;margin-bottom:16px;color:white;}
+    .hero-title .accent{color:var(--teal-l);}
+    .hero-edition{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-l);margin-bottom:20px;letter-spacing:1px;}
+    .hero-theme{font-size:1.05rem;color:var(--muted);font-style:italic;max-width:600px;margin:0 auto 36px;line-height:1.6;}
+    .hero-pills{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;}
+    .hero-pill{background:rgba(10,110,114,0.2);border:1px solid rgba(20,168,173,0.3);padding:8px 20px;border-radius:100px;font-size:0.85rem;color:var(--teal-l);font-weight:500;}
+    .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+    .btn-primary{background:var(--teal);color:white;padding:14px 36px;border-radius:8px;font-weight:600;font-size:1rem;text-decoration:none;border:2px solid var(--teal);transition:all 0.25s;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .btn-primary:hover{background:var(--teal-l);border-color:var(--teal-l);color:var(--dark);transform:translateY(-2px);}
+    .btn-outline{background:transparent;color:var(--gold-l);padding:14px 36px;border-radius:8px;font-weight:600;font-size:1rem;text-decoration:none;border:2px solid var(--gold);transition:all 0.25s;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .btn-outline:hover{background:var(--gold);color:var(--dark);transform:translateY(-2px);}
+    .hero-date-bar{margin-top:56px;display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
+    .date-item{text-align:center;}
+    .date-item .label{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:4px;}
+    .date-item .value{font-family:'Playfair Display',serif;font-size:1.1rem;color:white;font-weight:700;}
+    .date-sep{width:1px;background:rgba(255,255,255,0.1);align-self:stretch;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    .hero-content>*{animation:fadeUp 0.7s ease both;}
+    .hero-content>*:nth-child(1){animation-delay:0.1s}
+    .hero-content>*:nth-child(2){animation-delay:0.2s}
+    .hero-content>*:nth-child(3){animation-delay:0.3s}
+    .hero-content>*:nth-child(4){animation-delay:0.4s}
+    .hero-content>*:nth-child(5){animation-delay:0.5s}
+    .hero-content>*:nth-child(6){animation-delay:0.6s}
+
+    /* ── ABOUT ── */
+    #about{background:var(--bg2);}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+    .about-text p{color:var(--muted);line-height:1.8;margin-bottom:16px;font-size:0.97rem;}
+    .about-stats{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .stat-card{background:rgba(10,110,114,0.12);border:1px solid rgba(20,168,173,0.2);padding:24px;border-radius:12px;text-align:center;}
+    .stat-card .num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--teal-l);}
+    .stat-card .stat-label{font-size:0.8rem;color:var(--muted);margin-top:4px;}
+    .values-list{list-style:none;margin-top:24px;}
+    .values-list li{display:flex;align-items:flex-start;gap:12px;color:var(--muted);font-size:0.93rem;margin-bottom:12px;line-height:1.5;}
+    .values-list li::before{content:'◆';color:var(--teal-l);font-size:0.6rem;flex-shrink:0;margin-top:5px;}
+
+    /* ── KEYNOTE ── */
+    #keynote{background:var(--dark);}
+    .keynote-card{background:linear-gradient(135deg,rgba(10,110,114,0.15) 0%,rgba(196,154,42,0.08) 100%);border:1px solid rgba(20,168,173,0.25);border-radius:20px;padding:52px;display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center;position:relative;overflow:hidden;}
+    .keynote-card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(196,154,42,0.15),transparent 70%);border-radius:50%;}
+    .speaker-avatar{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:2.2rem;color:white;font-weight:700;flex-shrink:0;border:3px solid rgba(20,168,173,0.4);overflow:hidden;cursor:pointer;}
+    .speaker-avatar img{width:100%;height:100%;object-fit:cover;}
+    .keynote-tag{background:rgba(196,154,42,0.15);border:1px solid var(--gold);color:var(--gold-l);font-size:0.7rem;letter-spacing:1.5px;text-transform:uppercase;padding:4px 14px;border-radius:100px;display:inline-block;margin-bottom:14px;}
+    .keynote-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:white;margin-bottom:10px;line-height:1.3;}
+    .keynote-name{font-size:1.1rem;font-weight:600;color:var(--teal-l);margin-bottom:4px;}
+    .keynote-role{color:var(--muted);font-size:0.9rem;margin-bottom:16px;}
+    .keynote-desc{color:var(--muted);font-size:0.93rem;line-height:1.7;}
+
+    /* ── AGENDA ── */
+    #agenda{background:var(--bg2);}
+    .agenda-table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+    .agenda-table th{background:rgba(10,110,114,0.3);color:var(--teal-l);padding:14px 18px;text-align:left;font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid rgba(20,168,173,0.3);}
+    .agenda-table td{padding:14px 18px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,0.06);color:var(--muted);}
+    .agenda-table tr:hover td{background:rgba(10,110,114,0.07);}
+    .time-cell{color:var(--teal-l)!important;font-weight:600;font-size:0.82rem;white-space:nowrap;width:180px;}
+    .activity-cell{color:white!important;font-weight:500;}
+    .break-row td{background:rgba(196,154,42,0.07)!important;}
+    .break-row .activity-cell{color:var(--gold-l)!important;}
+
+    /* ── SPEAKERS ── */
+    #speakers{background:var(--dark);}
+    .speakers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;}
+    .speaker-card{background:rgba(255,255,255,0.03);border:1px solid rgba(20,168,173,0.15);border-radius:14px;padding:28px 20px 24px;text-align:center;transition:all 0.25s;}
+    .speaker-card:hover{border-color:rgba(20,168,173,0.5);transform:translateY(-4px);}
+    .sp-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--mid));margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.3rem;color:white;font-weight:700;border:2px solid rgba(20,168,173,0.3);overflow:hidden;position:relative;cursor:pointer;}
+    .sp-avatar img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%;}
+    .sp-name{font-weight:600;color:white;font-size:0.92rem;margin-bottom:6px;}
+    .sp-role{color:var(--muted);font-size:0.78rem;line-height:1.4;}
+    .sp-org{display:inline-block;margin-top:10px;background:rgba(10,110,114,0.2);color:var(--teal-l);font-size:0.72rem;padding:3px 10px;border-radius:100px;}
+
+    /* ── WORKSHOP ── */
+    #workshop{background:var(--bg2);}
+    .workshop-card{background:rgba(10,110,114,0.1);border:1px solid rgba(20,168,173,0.25);border-radius:16px;padding:40px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;}
+    .workshop-card h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:white;margin-bottom:12px;}
+    .workshop-card p{color:var(--muted);line-height:1.7;font-size:0.93rem;margin-bottom:12px;}
+    .ws-meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:10px;}
+    .ws-chip{background:rgba(196,154,42,0.12);border:1px solid rgba(196,154,42,0.3);color:var(--gold-l);font-size:0.78rem;padding:5px 14px;border-radius:100px;}
+
+    /* ── PARTNERS ── */
+    #partners{background:var(--dark);}
+    .partners-grid{display:flex;flex-wrap:wrap;gap:12px;}
+    .partner-badge{background:rgba(255,255,255,0.04);border:1px solid rgba(20,168,173,0.2);border-radius:10px;padding:14px 22px;font-size:0.85rem;color:var(--muted);transition:all 0.2s;display:flex;align-items:center;gap:10px;cursor:pointer;}
+    .partner-badge:hover{border-color:rgba(20,168,173,0.5);color:white;background:rgba(10,110,114,0.12);}
+    .partner-badge img{width:40px;height:40px;object-fit:contain;border-radius:4px;flex-shrink:0;}
+
+    /* ── CONTACT ── */
+    #contact{background:var(--bg2);}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+    .contact-card{background:rgba(255,255,255,0.03);border:1px solid rgba(20,168,173,0.15);border-radius:14px;padding:28px;text-align:center;}
+    .contact-icon{font-size:1.8rem;margin-bottom:10px;}
+    .contact-card h4{color:white;font-size:0.9rem;margin-bottom:6px;}
+    .contact-card p{color:var(--muted);font-size:0.83rem;}
+
+    /* ── FOOTER ── */
+    footer{background:rgba(0,0,0,0.5);border-top:1px solid rgba(20,168,173,0.15);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+    .foot-logo{font-family:'Playfair Display',serif;color:var(--gold-l);font-size:1rem;}
+    .foot-copy{color:var(--muted);font-size:0.78rem;}
+
+    /* ── REGISTRATION MODAL ── */
+    .reg-overlay{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+    .reg-overlay.open{opacity:1;pointer-events:all;}
+    .reg-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);}
+    .reg-modal{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(20,168,173,0.25);border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;transform:translateY(30px) scale(0.97);transition:transform 0.3s;}
+    .reg-overlay.open .reg-modal{transform:translateY(0) scale(1);}
+    .reg-modal::-webkit-scrollbar{width:4px;}
+    .reg-modal::-webkit-scrollbar-thumb{background:rgba(20,168,173,0.2);border-radius:2px;}
+    .reg-modal-header{padding:28px 32px 0;display:flex;justify-content:space-between;align-items:flex-start;}
+    .reg-modal-header h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:white;}
+    .reg-modal-header p{color:var(--muted);font-size:0.82rem;margin-top:4px;}
+    .reg-close{background:rgba(255,255,255,0.08);border:none;color:var(--muted);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;flex-shrink:0;transition:all 0.2s;}
+    .reg-close:hover{background:rgba(255,255,255,0.15);color:white;}
+    .reg-modal-body{padding:24px 32px 32px;}
+
+    /* form inside modal */
+    .form-progress{display:flex;margin-bottom:24px;position:relative;}
+    .form-progress::before{content:'';position:absolute;top:14px;left:14px;right:14px;height:2px;background:rgba(255,255,255,0.08);}
+    .progress-fill{position:absolute;top:14px;left:14px;height:2px;background:var(--teal-l);transition:width 0.4s ease;}
+    .prog-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;position:relative;z-index:1;}
+    .prog-dot{width:28px;height:28px;border-radius:50%;background:var(--mid);border:2px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:600;color:var(--muted);transition:all 0.3s;}
+    .prog-dot.active{background:var(--teal);border-color:var(--teal);color:white;}
+    .prog-dot.done{background:var(--gold);border-color:var(--gold);color:var(--dark);}
+    .prog-dot.done::after{content:'✓';}
+    .prog-label{font-size:0.65rem;color:var(--muted);text-align:center;}
+    .prog-label.active{color:var(--teal-l);}
+    .form-step{display:none;}
+    .form-step.active{display:block;}
+    .step-title{font-family:'Playfair Display',serif;font-size:1rem;color:white;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;font-size:0.73rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;}
+    .req{color:var(--teal-l);margin-left:2px;}
+    .form-group input,.form-group select{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px 13px;color:white;font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;}
+    .form-group input:focus,.form-group select:focus{border-color:var(--teal-l);}
+    .form-group select option{background:var(--dark);}
+    input::placeholder{color:rgba(168,191,193,0.4);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .phone-wrap{display:flex;gap:8px;}
+    .phone-prefix{background:rgba(10,110,114,0.2);border:1px solid rgba(20,168,173,0.3);border-radius:8px;padding:10px 13px;color:var(--teal-l);font-weight:600;font-size:0.88rem;white-space:nowrap;}
+    .radio-group,.check-group{display:flex;flex-direction:column;gap:8px;}
+    .radio-row{display:flex;gap:20px;}
+    .radio-label,.check-label{display:flex;align-items:flex-start;gap:9px;cursor:pointer;color:var(--muted);font-size:0.85rem;line-height:1.5;}
+    .radio-label input,.check-label input{accent-color:var(--teal-l);margin-top:3px;flex-shrink:0;}
+    .form-nav{display:flex;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);}
+    .btn-prev{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.12);padding:9px 20px;border-radius:8px;cursor:pointer;font-size:0.85rem;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+    .btn-prev:hover{border-color:var(--muted);color:white;}
+    .btn-next{background:var(--teal);color:white;border:none;padding:9px 24px;border-radius:8px;cursor:pointer;font-size:0.88rem;font-weight:600;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+    .btn-next:hover{background:var(--teal-l);color:var(--dark);}
+    .btn-submit{background:linear-gradient(135deg,var(--teal),var(--gold));color:white;border:none;padding:12px 28px;border-radius:8px;cursor:pointer;font-size:0.92rem;font-weight:600;font-family:'DM Sans',sans-serif;transition:opacity 0.2s;width:100%;}
+    .btn-submit:hover{opacity:0.88;}
+    .btn-submit:disabled{opacity:0.5;cursor:not-allowed;}
+    .success-screen{display:none;text-align:center;padding:20px 0;}
+    .success-icon{font-size:3.5rem;margin-bottom:14px;}
+    .success-screen h3{font-family:'Playfair Display',serif;font-size:1.4rem;color:white;margin-bottom:8px;}
+    .success-screen p{color:var(--muted);font-size:0.88rem;}
+    .reg-id-badge{display:inline-block;margin-top:14px;background:rgba(10,110,114,0.2);border:1px solid var(--teal-l);color:var(--teal-l);padding:8px 18px;border-radius:8px;font-weight:600;font-size:0.82rem;}
+
+    /* ── EDIT MODE ── */
+    [contenteditable="true"]{outline:2px dashed rgba(20,168,173,0.4);border-radius:4px;cursor:text;transition:outline 0.2s;}
+    [contenteditable="true"]:focus{outline:2px solid var(--teal-l);background:rgba(20,168,173,0.05);}
+    .edit-mode-hint{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(10,110,114,0.95);border:1px solid var(--teal-l);color:white;padding:9px 22px;border-radius:100px;font-size:0.78rem;z-index:1500;display:none;font-family:'DM Sans',sans-serif;}
+
+    /* ── IMAGE UPLOAD OVERLAY ── */
+    .img-upload-zone{border:2px dashed rgba(20,168,173,0.3);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:8px;}
+    .img-upload-zone:hover{border-color:var(--teal-l);background:rgba(20,168,173,0.05);}
+    .img-upload-zone p{color:var(--muted);font-size:0.78rem;}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      .about-grid,.workshop-card,.keynote-card{grid-template-columns:1fr;}
+      .contact-grid{grid-template-columns:1fr;}
+      .form-row{grid-template-columns:1fr;}
+      section{padding:60px 16px;}
+      .keynote-card{padding:28px;}
+      .reg-modal-header,.reg-modal-body{padding-left:20px;padding-right:20px;}
+    }
+
+    /* toast */
+    #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(13,31,34,0.70);border:1px solid rgba(20,168,173,0.3);color:var(--teal-l);padding:10px 22px;border-radius:100px;font-size:0.8rem;z-index:9999;display:none;font-family:'DM Sans',sans-serif;}
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.85);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    /* stagger delays */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.2s; }
+    .delay-4 { transition-delay: 0.4s; }
+    .delay-5 { transition-delay: 0.5s; }
+
+    /* ── HERO PARTICLES ── */
+    .hero-particles {
+      position: absolute; inset: 0;
+      overflow: hidden; pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      width: 3px; height: 3px;
+      background: var(--teal-l);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float-particle linear infinite;
+    }
+    @keyframes float-particle {
+      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+    }
+
+    /* ── HERO GLOW PULSE ── */
+    .hero-bg {
+      animation: glow-pulse 6s ease-in-out infinite;
+    }
+    @keyframes glow-pulse {
+      0%, 100% { filter: brightness(1); }
+      50%       { filter: brightness(1.15); }
+    }
+
+    /* ── BUTTON RIPPLE ── */
+    .btn-primary, .btn-outline, .btn-next, .btn-submit {
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::after, .btn-outline::after {
+      content: '';
+      position: absolute;
+      width: 0; height: 0;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      transition: width 0.5s ease, height 0.5s ease, opacity 0.5s ease;
+      opacity: 0;
+    }
+    .btn-primary:active::after, .btn-outline:active::after {
+      width: 300px; height: 300px; opacity: 0;
+    }
+
+    /* ── CARD HOVER ── */
+    .speaker-card {
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s !important;
+    }
+    .speaker-card:hover {
+      box-shadow: 0 8px 32px rgba(10,110,114,0.3) !important;
+    }
+    .stat-card {
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 28px rgba(10,110,114,0.25);
+      border-color: rgba(20,168,173,0.4);
+    }
+    .partner-badge {
+      transition: all 0.3s !important;
+    }
+    .partner-badge:hover {
+      transform: translateY(-3px) !important;
+      box-shadow: 0 6px 20px rgba(10,110,114,0.2) !important;
+    }
+    .contact-card {
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .contact-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 28px rgba(10,110,114,0.2);
+      border-color: rgba(20,168,173,0.35);
+    }
+
+    /* ── FLOATING NAV ANIMATION ── */
+    .fab-menu {
+      animation: fab-bounce 2s ease-in-out infinite;
+    }
+    @keyframes fab-bounce {
+      0%, 100% { box-shadow: 0 4px 20px rgba(10,110,114,0.5); }
+      50%       { box-shadow: 0 8px 32px rgba(10,110,114,0.8); }
+    }
+
+    /* ── NUMBER COUNTER ── */
+    .num[data-count] {
+      transition: all 0.3s;
+    }
+
+    /* ── AGENDA ROW HOVER ── */
+    .agenda-table tbody tr {
+      transition: background 0.2s;
+    }
+
+    /* ── SECTION TITLE UNDERLINE ANIMATION ── */
+    .divider {
+      animation: expand-divider 1.5s ease both;
+      transform-origin: left;
+    }
+    @keyframes expand-divider {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+
+    /* ── TYPING CURSOR ON HERO ── */
+    .hero-tag::after {
+      content: '';
+      display: inline-block;
+      width: 2px; height: 12px;
+      background: var(--gold-l);
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── COUNTDOWN ── */
+    .countdown-wrap {
+      margin-top: 40px;
+      text-align: center;
+    }
+    .countdown-label {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--muted); margin-bottom: 14px;
+    }
+    .countdown-boxes {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .cd-box {
+      background: rgba(10,110,114,0.15);
+      border: 1px solid rgba(20,168,173,0.3);
+      border-radius: 12px; padding: 14px 20px;
+      min-width: 72px; text-align: center;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s;
+    }
+    .cd-box:hover {
+      background: rgba(10,110,114,0.3);
+      border-color: var(--teal-l);
+      transform: translateY(-3px);
+    }
+    .cd-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 900;
+      color: var(--teal-l); line-height: 1;
+      transition: all 0.2s;
+    }
+    .cd-num.tick {
+      transform: scale(1.2);
+      color: var(--gold-l);
+    }
+    .cd-unit {
+      font-size: 0.62rem; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--muted); margin-top: 4px;
+    }
+    .cd-sep {
+      font-size: 1.5rem; color: var(--muted); font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    /* ── MOUSE PARALLAX ── */
+    .hero-content {
+      transition: transform 0.1s ease-out;
+    }
+
+    /* ── CURSOR GLOW ── */
+    .cursor-glow {
+      position: fixed;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(20,168,173,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      transform: translate(-50%, -50%);
+      transition: left 0.15s ease, top 0.15s ease;
+    }
+
+    /* ── SCROLL PROGRESS BAR ── */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; z-index: 9998;
+      height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--teal-l), var(--gold-l));
+      transition: width 0.1s;
+    }
+
+    /* ── SECTION HIGHLIGHT ON SCROLL ── */
+    .section-anim .section-title {
+      position: relative;
+    }
+    .section-anim .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--teal-l), transparent);
+      transition: width 1s ease 0.5s;
+    }
+    .section-anim.in-view .section-title::after {
+      width: 100%;
+    }
+
+    /* ── HERO PILL HOVER ── */
+    .hero-pill {
+      transition: all 0.25s !important;
+      cursor: default;
+    }
+    .hero-pill:hover {
+      background: rgba(10,110,114,0.4) !important;
+      border-color: var(--teal-l) !important;
+      color: white !important;
+      transform: translateY(-2px);
+    }
+
+    /* ── KEYNOTE CARD HOVER ── */
+    .keynote-card {
+      transition: transform 0.3s, box-shadow 0.3s !important;
+    }
+    .keynote-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(10,110,114,0.25) !important;
+    }
+
+    /* remove contact-icon space */
+    .contact-icon { display: none; }
+
+    /* ── LOGO BAR ── */
+    .logo-bar {
+      background: rgba(13,31,34,0.98);
+      border-bottom: 1px solid rgba(20,168,173,0.2);
+      padding: 12px 40px;
+      position: sticky; top: 0; z-index: 1000;
+    }
+    .logo-bar-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-bar-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; color: var(--gold-l);
+      letter-spacing: 0.5px; text-align: center; flex: 1;
+    }
+    .logo-slot {
+      width: 120px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+      border: none;
+    }
+
+    /* ── GALLERY ── */
+    #gallery { background: var(--dark); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .gallery-slot {
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      border: 1px dashed rgba(20,168,173,0.2);
+      transition: all 0.3s;
+    }
+    .gallery-slot:hover { border-color: var(--teal-l); transform: scale(1.02); }
+    .gallery-slot img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .gallery-slot:hover img { transform: scale(1.05); }
+
+    .gallery-slot .del-img {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(0,0,0,0.6); color: white;
+      border: none; border-radius: 50%;
+      width: 26px; height: 26px; cursor: pointer;
+      font-size: 0.8rem; display: none;
+      align-items: center; justify-content: center;
+    }
+    .gallery-slot:hover .del-img { display: flex; }
+    @media(max-width:600px){ .gallery-grid { grid-template-columns: 1fr 1fr; } }
+
+    /* ── LINKS SECTION ── */
+    #links { background: var(--bg2); }
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .link-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(20,168,173,0.15);
+      border-radius: 14px;
+      padding: 20px 22px;
+      display: flex; align-items: center; gap: 14px;
+      text-decoration: none;
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+    .link-card:hover {
+      border-color: var(--teal-l);
+      background: rgba(10,110,114,0.12);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(10,110,114,0.2);
+    }
+    .link-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(10,110,114,0.2);
+      border: 1px solid rgba(20,168,173,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .link-icon img { width: 26px; height: 26px; object-fit: contain; border-radius: 4px; }
+    .link-info { flex: 1; min-width: 0; }
+    .link-name { color: white; font-weight: 600; font-size: 0.9rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-desc { color: var(--muted); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-arrow { color: var(--teal-l); font-size: 0.9rem; flex-shrink: 0; }
+    .links-empty { color: var(--muted); font-size: 0.88rem; text-align: center; padding: 40px; width: 100%; }
+
+    /* ── CUSTOM SECTIONS ── */
+    .custom-section-body {
+      color: var(--muted);
+      font-size: 0.97rem;
+      line-height: 1.8;
+      max-width: 800px;
+    }
+    .custom-section-body img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    /* ── INLINE LINKS ── */
+    .inline-links {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-top: 20px;
+    }
+    .inline-links:empty { display: none; margin: 0; }
+    .inline-link-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(10,110,114,0.15);
+      border: 1px solid rgba(20,168,173,0.3);
+      color: var(--teal-l); padding: 8px 18px;
+      border-radius: 100px; font-size: 0.82rem;
+      font-weight: 500; text-decoration: none;
+      transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .inline-link-btn:hover {
+      background: rgba(10,110,114,0.3);
+      border-color: var(--teal-l);
+      transform: translateY(-2px);
+    }
+    .inline-links-footer {
+      margin-top: 0;
+      justify-content: center;
+      padding-top: 16px;
+      border-top: 1px solid rgba(20,168,173,0.1);
+      width: 100%;
+    }
+
+    /* ── INTERACTIVE TEXT ── */
+    .interactive-text {
+      position: relative;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+    .interactive-text::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal-l), var(--gold-l));
+      transition: right 0.4s ease;
+      border-radius: 2px;
+    }
+    .interactive-text:hover::after { right: 0; }
+    .interactive-text:hover { color: white !important; }
+
+    .interactive-glow {
+      transition: all 0.3s;
+    }
+    .interactive-glow:hover {
+      text-shadow: 0 0 20px rgba(20,168,173,0.6);
+      color: white !important;
+    }
+
+    .interactive-scale {
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+    .interactive-scale:hover { transform: scale(1.05); }
+
+    .interactive-slide {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    .interactive-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(20,168,173,0.15), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+    .interactive-slide:hover::before { transform: translateX(100%); }
+
+    /* ── NAV ITEM STYLES ── */
+    .float-nav a.nav-active {
+      color: var(--teal-l) !important;
+      background: rgba(20,168,173,0.08);
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<button class="fab-menu" id="fabMenu" onclick="toggleNav()">
+  <span></span><span></span><span></span>
+</button>
+<div class="float-nav" id="floatNav">
+  <a href="#home" onclick="navTo('home')"><span class="nav-icon">○</span> Home</a>
+  <a href="#about" onclick="navTo('about')"><span class="nav-icon">○</span> About</a>
+  <a href="#keynote" onclick="navTo('keynote')"><span class="nav-icon">○</span> Keynote</a>
+  <a href="#agenda" onclick="navTo('agenda')"><span class="nav-icon">○</span> Agenda</a>
+  <a href="#speakers" onclick="navTo('speakers')"><span class="nav-icon">○</span> Speakers</a>
+  <a href="#workshop" onclick="navTo('workshop')"><span class="nav-icon">○</span> Workshop</a>
+  <a href="#partners" onclick="navTo('partners')"><span class="nav-icon">○</span> Partners</a>
+  <a href="#contact" onclick="navTo('contact')"><span class="nav-icon">○</span> Contact</a>
+  <div class="nav-divider"></div>
+  <a href="#" onclick="openReg()" class="nav-register"><span class="nav-icon">✦</span> Register Now</a>
+</div>
+
+<div class="logo-bar" id="logoBar">
+  <div class="logo-bar-inner">
+    <div class="logo-slot" id="logoSlot1" title="Logo 1">
+      <img id="logoImg1" style="display:none; height:48px; object-fit:contain;"/>
+    </div>
+    <div class="logo-bar-title">Nursing Research & Innovation Forum</div>
+    <div class="logo-slot" id="logoSlot2" title="Logo 2">
+      <img id="logoImg2" style="display:none; height:48px; object-fit:contain;"/>
+    </div>
+  </div>
+</div>
+
+<section id="home">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-particles" id="heroParticles"></div>
+  <div class="hero-content">
+    <div class="hero-tag" data-itext="hero-tag">3rd Edition · 2026</div>
+    <h1 class="hero-title" data-itext="hero-title">Nursing Research &<br><span class="accent">Innovation Forum</span></h1>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-l);margin-bottom:20px;letter-spacing:1px;">College of Nursing · Imam Abdulrahman Bin Faisal University</div>
+    <p class="hero-theme" data-itext="hero-theme">"Transforming Healthcare Through Research, Innovation, and Multidisciplinary Clinical Impact"</p>
+    <div class="hero-pills">
+      <span class="hero-pill">Research</span>
+      <span class="hero-pill">Innovation</span>
+      <span class="hero-pill">Impact</span>
+    </div>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="openReg()">Register Now</button>
+      <a href="#agenda" class="btn-outline" onclick="navTo('agenda')">View Agenda</a>
+    </div>
+    <div class="inline-links" id="links-hero"></div>
+    <div class="hero-date-bar">
+      <div class="date-item"><div class="label">Date</div><div class="value">Wednesday, June 4, 2026</div></div>
+      <div class="date-sep"></div>
+      <div class="date-item"><div class="label">Venue</div><div class="value">IAU · Dammam, Saudi Arabia</div></div>
+      <div class="date-sep"></div>
+      <div class="date-item"><div class="label">Theme</div><div class="value">Research · Innovation · Impact</div></div>
+    </div>
+    <div class="countdown-wrap">
+      <div class="countdown-label">Event starts in</div>
+      <div class="countdown-boxes">
+        <div class="cd-box"><div class="cd-num" id="cdDays">--</div><div class="cd-unit">Days</div></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-box"><div class="cd-num" id="cdHours">--</div><div class="cd-unit">Hours</div></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-box"><div class="cd-num" id="cdMins">--</div><div class="cd-unit">Minutes</div></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-box"><div class="cd-num" id="cdSecs">--</div><div class="cd-unit">Seconds</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about" data-section="about" class="section-anim">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text p-reveal-left"><div class="inline-links" id="links-about"></div>
+        <div class="section-tag">About the Forum</div>
+        <h2 class="section-title" data-itext="sec-8859">Forum Overview</h2>
+        <div class="divider"></div>
+        <p>The Nursing Research & Innovation Forum (NRIF) is the flagship annual research and innovation event of the College of Nursing at Imam Abdulrahman Bin Faisal University.</p>
+        <p>The forum brings together students, faculty members, researchers, healthcare professionals, innovators, and strategic partners to showcase research excellence, foster collaboration, and accelerate innovation that improves healthcare outcomes and quality of life.</p>
+        <p>Aligned with Saudi Vision 2030, RDIA priorities, IAU's Research & Innovation Strategy, and the United Nations Sustainable Development Goals (SDGs).</p>
+        <ul class="values-list">
+          <li>Scientific excellence and evidence-based practice</li>
+          <li>Interdisciplinary collaboration and innovation</li>
+          <li>Strategic academic–clinical partnerships</li>
+          <li>Translation of research into societal impact</li>
+          <li>Development of the next generation of nursing researchers</li>
+        </ul>
+      </div>
+      <div>
+        <div class="about-stats reveal-right">
+          <div class="stat-card reveal-scale delay-1"><div class="num">3rd</div><div class="stat-label">Annual Edition</div></div>
+          <div class="stat-card reveal-scale delay-2"><div class="num">2</div><div class="stat-label">Panel Discussions</div></div>
+          <div class="stat-card reveal-scale delay-3"><div class="num">15+</div><div class="stat-label">Speakers</div></div>
+          <div class="stat-card reveal-scale delay-4"><div class="num">9+</div><div class="stat-label">Excellence Partners</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="keynote" data-section="keynote" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Keynote Lecture</div>
+    <h2 class="section-title" data-itext="sec-8859">Keynote Speaker</h2>
+    <div class="divider"></div>
+    <div class="keynote-card reveal">
+      <div class="speaker-avatar" id="keynoteAvatar">TO</div>
+      <div>
+        <span class="keynote-tag">Keynote Lecture</span>
+        <h3 class="keynote-title" data-itext="keynote-title">Driving Healthcare Transformation Through Research, Innovation, and Multidisciplinary Clinical Impact</h3>
+        <div class="keynote-name" data-itext="keynote-name">Professor Taqwa Yousif Omar</div>
+        <div class="keynote-role">Member of the Shura Council · Saudi Arabia</div>
+        <div class="inline-links" id="links-keynote"></div>
+        <p class="keynote-desc">This keynote explores how research, innovation, and multidisciplinary collaboration are shaping the future of healthcare — highlighting evidence-based practice, strategic partnerships, and scientific leadership in addressing emerging healthcare challenges.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="agenda" data-section="agenda" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Program Schedule</div>
+    <h2 class="section-title" data-itext="sec-8859">Forum Agenda</h2>
+    <div class="divider"></div>
+    <table class="agenda-table">
+      <thead><tr><th>Time</th><th>Activity</th><th>Details</th></tr></thead>
+      <tbody>
+        </tbody>
+    </table>
+    <div class="inline-links" id="links-agenda"></div>
+  </div>
+</section>
+
+<section id="speakers" data-section="speakers" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Forum Speakers</div>
+    <h2 class="section-title" data-itext="sec-8859">Distinguished Speakers</h2>
+    <div class="divider"></div>
+    <div class="speakers-grid" id="speakersGrid">
+      </div>
+    <div class="inline-links" id="links-speakers"></div>
+  </div>
+</section>
+
+<section id="workshop" data-section="workshop" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Interactive Workshop</div>
+    <h2 class="section-title" data-itext="sec-8859">Workshop</h2>
+    <div class="divider"></div>
+    <div class="workshop-card reveal">
+      <div>
+        <h3>Building Successful Academic–Clinical Research Partnerships</h3>
+        <p>This interactive workshop explores practical approaches to establishing and sustaining successful collaborations between academic institutions and healthcare organizations, with a focus on research logistics, collaboration models, governance, and healthcare impact.</p>
+        <div class="ws-meta">
+          <span class="ws-chip">02:30 – 03:30 PM</span>
+          <span class="ws-chip">Dr. Hayat Mushcab – JHAH</span>
+          <span class="ws-chip">Interactive Session</span>
+        </div>
+      </div>
+    </div>
+    <div class="inline-links" id="links-workshop"></div>
+  </div>
+</section>
+
+<section id="partners" data-section="partners" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Excellence Partners</div>
+    <h2 class="section-title" data-itext="sec-8859">Partners in Excellence, Empowerment & Impact</h2>
+    <div class="divider"></div>
+    <p class="section-sub" style="margin-bottom:32px;">Healthcare organizations and strategic partners whose contributions have strengthened nursing education, research excellence, and clinical impact.</p>
+    <div class="partners-grid" id="partnersGrid">
+      </div>
+    <div class="inline-links" id="links-partners"></div>
+  </div>
+</section>
+
+<section id="links" data-section="links" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Quick Links</div>
+    <h2 class="section-title reveal">Useful Links</h2>
+    <div class="divider"></div>
+    <div class="links-grid" id="linksGrid">
+      </div>
+  </div>
+</section>
+
+<section id="gallery" data-section="gallery" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Gallery</div>
+    <h2 class="section-title reveal">Event Gallery</h2>
+    <div class="divider"></div>
+    <div class="gallery-grid" id="galleryGrid">
+      </div>
+  </div>
+</section>
+
+<div id="customSectionsWrap"></div>
+
+<section id="contact" data-section="contact" class="section-anim">
+  <div class="container">
+    <div class="section-tag">Get in Touch</div>
+    <h2 class="section-title" data-itext="sec-8859">Contact Us</h2>
+    <div class="divider"></div>
+    <div class="contact-grid">
+      <div class="contact-card reveal delay-1"><h4>Location</h4><p>College of Nursing<br>Imam Abdulrahman Bin Faisal University<br>Dammam, Saudi Arabia</p></div>
+      <div class="contact-card reveal delay-2"><h4>Forum Date</h4><p>Wednesday, June 4, 2026<br>08:00 AM – 04:30 PM</p></div>
+      <div class="contact-card reveal delay-3"><h4>Inquiries</h4><p>For questions and inquiries,<br>please contact the organizing committee.</p></div>
+    </div>
+    <div class="inline-links" id="links-contact"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo" id="secretLogo" onclick="secretClick()">NRIF 2026</div>
+  <div class="foot-copy">© 2026 College of Nursing · IAU · All Rights Reserved</div>
+  <div class="inline-links inline-links-footer" id="links-footer"></div>
+</footer>
+
+<div class="reg-overlay" id="regOverlay">
+  <div class="reg-backdrop" onclick="closeReg()"></div>
+  <div class="reg-modal">
+    <div class="reg-modal-header">
+      <div><h2>Register for NRIF 2026</h2><p>Nursing Research & Innovation Forum · June 4, 2026</p></div>
+      <button class="reg-close" onclick="closeReg()">✕</button>
+    </div>
+    <div class="reg-modal-body">
+      <div class="form-progress">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        <div class="prog-step"><div class="prog-dot active" id="dot1">1</div><div class="prog-label active" id="lbl1">Personal</div></div>
+        <div class="prog-step"><div class="prog-dot" id="dot2">2</div><div class="prog-label" id="lbl2">Participation</div></div>
+        <div class="prog-step"><div class="prog-dot" id="dot3">3</div><div class="prog-label" id="lbl3">Consent</div></div>
+      </div>
+
+      <div class="form-step active" id="step1">
+        <div class="step-title">Step 1 · Personal Details</div>
+        <div class="form-row">
+          <div class="form-group"><label>First Name <span class="req">*</span></label><input type="text" id="firstName" placeholder="First name"/></div>
+          <div class="form-group"><label>Last Name <span class="req">*</span></label><input type="text" id="lastName" placeholder="Last name"/></div>
+        </div>
+        <div class="form-group"><label>Gender <span class="req">*</span></label><div class="radio-row" style="margin-top:4px;"><label class="radio-label"><input type="radio" name="gender" value="Female"/> Female</label><label class="radio-label"><input type="radio" name="gender" value="Male"/> Male</label></div></div>
+        <div class="form-group"><label>Phone <span class="req">*</span></label><div class="phone-wrap"><span class="phone-prefix">+966</span><input type="tel" id="phone" placeholder="5XXXXXXXX" style="flex:1;"/></div></div>
+        <div class="form-group"><label>Email <span class="req">*</span></label><input type="email" id="email" placeholder="name@example.com"/></div>
+        <div class="form-group"><label>Affiliation <span class="req">*</span></label><select id="affiliation"><option value="">Select affiliation</option><option>Faculty Member</option><option>Researcher</option><option>Healthcare Professional</option><option>PhD Student</option><option>MSc Student</option><option>Undergraduate Student</option><option>Other</option></select></div>
+        <div class="form-group"><label>Institution <span class="req">*</span></label><div class="radio-group"><label class="radio-label"><input type="radio" name="institution" value="IAU" checked/> Imam Abdulrahman Bin Faisal University (IAU)</label><label class="radio-label"><input type="radio" name="institution" value="Other"/> Other</label></div></div>
+        <div class="form-group"><label>SCFHS Number <span style="color:var(--muted);font-weight:400;">(optional)</span></label><input type="text" id="scfhs" placeholder="SCFHS number"/></div>
+        <div class="form-nav"><div></div><button class="btn-next" onclick="goStep(2)">Next →</button></div>
+      </div>
+
+      <div class="form-step" id="step2">
+        <div class="step-title">Step 2 · Participation Details</div>
+        <div class="form-group"><label>Are you presenting a poster or oral presentation? <span class="req">*</span></label><div class="radio-row" style="margin-top:6px;"><label class="radio-label"><input type="radio" name="presenting" value="Yes"/> Yes</label><label class="radio-label"><input type="radio" name="presenting" value="No" checked/> No</label></div></div>
+        <div class="form-group"><label>How did you hear about the Forum? <span class="req">*</span></label><input type="text" id="hearAbout" placeholder="e.g. Email, social media, colleague..."/></div>
+        <div class="form-nav"><button class="btn-prev" onclick="goStep(1)">← Back</button><button class="btn-next" onclick="goStep(3)">Next →</button></div>
+      </div>
+
+      <div class="form-step" id="step3">
+        <div class="step-title">Step 3 · Consent</div>
+        <div class="form-group"><div class="check-group"><label class="check-label"><input type="checkbox" id="consentEmail"/><span>I agree to receive updates via email.<br><small style="color:var(--muted)">أوافق على استلام التحديثات عبر البريد الإلكتروني.</small></span></label><label class="check-label" style="margin-top:10px;"><input type="checkbox" id="consentMedia"/><span>I consent to event photography and media coverage.<br><small style="color:var(--muted)">أوافق على استخدام الصور الفوتوغرافية والتغطية الإعلامية.</small></span></label></div></div>
+        <div class="form-nav"><button class="btn-prev" onclick="goStep(2)">← Back</button><div></div></div>
+        <button class="btn-submit" id="submitBtn" onclick="submitForm()" style="margin-top:16px;">Submit Registration · إرسال التسجيل</button>
+      </div>
+
+      <div class="success-screen" id="successScreen">
+        <div class="success-icon">🎓</div>
+        <h3>You're Registered!</h3>
+        <p>Thank you! We look forward to seeing you on <strong>Wednesday, June 4, 2026</strong>.</p>
+        <div class="reg-id-badge" id="regIdBadge"></div>
+        <br><br><button class="btn-outline" onclick="closeReg()" style="margin-top:8px;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="admin-modal-overlay" id="adminModal">
+  <div class="admin-modal-backdrop" onclick="closeAdmin()"></div>
+  <div class="admin-modal-card">
+    <button class="admin-close-btn" onclick="closeAdmin()">✕</button>
+    <h3>🔐 Admin Access</h3>
+    <p>Enter your credentials to continue</p>
+    <input type="text" id="adminUser" placeholder="Username"/>
+    <input type="password" id="adminPass" placeholder="Password"/>
+    <button class="admin-login-btn" onclick="adminLogin()">Login · دخول</button>
+    <div class="admin-err" id="adminErr">Incorrect credentials</div>
+  </div>
+</div>
+
+<script>
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbvGRvon0z2MbVJwLhfJvCl1XOv8rk3Oa_25cv8swh3QwZRfOSl7XuiLgv1N_TKbACaQbA/exec';
+
+// ── LOAD DATA FROM GOOGLE SHEETS ON VISITOR PAGE ──
+window.addEventListener('load', () => {
+  showToast('⏳ Loading latest forum data...');
+  fetch(SHEETS_URL)
+    .then(res => res.json())
+    .then(data => {
+      // 1. Settings & Titles
+      if (data.settings) {
+        if (data.settings.title) document.querySelector('.hero-title').innerHTML = data.settings.title;
+        if (data.settings.theme) document.querySelector('.hero-theme').innerHTML = data.settings.theme;
+        if (data.settings.footerCopy) document.querySelector('.foot-copy').innerHTML = data.settings.footerCopy;
+      }
+      // 2. Load Speakers Dynamic
+      if (data.speakers && data.speakers.length > 0) {
+        const grid = document.getElementById('speakersGrid');
+        if (grid) {
+          grid.innerHTML = data.speakers.map(s => `
+            <div class="speaker-card">
+              <div class="sp-avatar" id="sp-${s.id}">
+                ${s.photo ? `<img src="${s.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>` : s.initials}
+              </div>
+              <div class="sp-name">${s.name}</div>
+              <div class="sp-role">${s.role}</div>
+              <span class="sp-org">${s.org}</span>
+            </div>
+          `).join('');
+        }
+      }
+      // 3. Load Agenda Dynamic
+      if (data.agenda && data.agenda.length > 0) {
+        const body = document.querySelector('.agenda-table tbody');
+        if (body) {
+          body.innerHTML = data.agenda.map(r => `
+            <tr class="${r.activity.includes('Break') || r.activity.includes('بريك') ? 'break-row' : ''}">
+              <td class="time-cell">${r.time}</td>
+              <td class="activity-cell">${r.activity}</td>
+              <td>${r.details}</td>
+            </tr>
+          `).join('');
+        }
+      }
+      // 4. Load Partners Dynamic
+      if (data.partners && data.partners.length > 0) {
+        const partGrid = document.getElementById('partnersGrid');
+        if (partGrid) {
+          partGrid.innerHTML = data.partners.map(p => `
+            <div class="partner-badge" id="p-${p.id}">
+              ${p.logo ? `<img src="${p.logo}" style="width:40px;height:40px;object-fit:contain;border-radius:4px;flex-shrink:0;"/>` : ''}
+              <span>${p.name}</span>
+            </div>
+          `).join('');
+        }
+      }
+      showToast('✅ Online data loaded!');
+    })
+    .catch(() => showToast('⚠️ Fallback to local layout loaded.'));
+});
+
+// Navigation functions
+function toggleNav() {
+  document.getElementById('fabMenu').classList.toggle('open');
+  document.getElementById('floatNav').classList.toggle('open');
+}
+function navTo(id) {
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+  document.getElementById('fabMenu').classList.remove('open');
+  document.getElementById('floatNav').classList.remove('open');
+}
+
+// Modal handling
+function openReg() { document.getElementById('regOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeReg() { document.getElementById('regOverlay').classList.remove('open'); document.body.style.overflow = ''; }
+
+// Form Step Handling
+let currentStep = 1;
+function goStep(n) {
+  if (n > currentStep && !validateStep(currentStep)) return;
+  document.getElementById('step'+currentStep).classList.remove('active');
+  document.getElementById('step'+n).classList.add('active');
+  currentStep = n;
+  updateProgress();
+}
+function validateStep(s) {
+  if (s===1) {
+    const fn=document.getElementById('firstName').value.trim();
+    const ln=document.getElementById('lastName').value.trim();
+    const ph=document.getElementById('phone').value.trim();
+    const em=document.getElementById('email').value.trim();
+    const af=document.getElementById('affiliation').value;
+    const ge=document.querySelector('input[name="gender"]:checked');
+    if (!fn||!ln||!ph||!em||!af||!ge){alert('Please fill in required fields.');return false;}
+  }
+  return true;
+}
+function updateProgress() {
+  const fills={1:0,2:50,3:100};
+  document.getElementById('progressFill').style.width=fills[currentStep]+'%';
+}
+
+// Submission
+async function submitForm() {
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent='⏳ Submitting...';
+  const data={
+    action: "register",
+    id:'NRIF-'+Date.now(),
+    firstName:document.getElementById('firstName').value.trim(),
+    lastName:document.getElementById('lastName').value.trim(),
+    gender:document.querySelector('input[name="gender"]:checked')?.value||'',
+    phone:'+966'+document.getElementById('phone').value.trim(),
+    email:document.getElementById('email').value.trim(),
+    affiliation:document.getElementById('affiliation').value,
+    institution:document.querySelector('input[name="institution"]:checked')?.value||'',
+    scfhs:document.getElementById('scfhs').value.trim(),
+    presenting:document.querySelector('input[name="presenting"]:checked')?.value||'',
+    hearAbout:document.getElementById('hearAbout').value.trim(),
+    consentEmail:document.getElementById('consentEmail').checked,
+    consentMedia:document.getElementById('consentMedia').checked,
+    timestamp:new Date().toISOString()
+  };
+  try{await fetch(SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});}catch(e){}
+  document.getElementById('step3').classList.remove('active');
+  document.getElementById('successScreen').style.display='block';
+  document.getElementById('regIdBadge').textContent='Registration ID: '+data.id;
+}
+
+// Secret Login
+let secretCount = 0;
+function secretClick() {
+  secretCount++;
+  if (secretCount >= 5) {
+    secretCount = 0;
+    document.getElementById('adminModal').classList.add('open');
+  }
+}
+function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
+function adminLogin() {
+  if (document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === 'nrif2026') {
+    window.location.href = 'admin.html';
+  } else { document.getElementById('adminErr').style.display = 'block'; }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none',2500);
+}
+
+// Countdown timer
+function updateCountdown() {
+  const eventDate = new Date('2026-06-04T08:00:00');
+  const now = new Date();
+  const diff = eventDate - now;
+  if(diff <= 0) return;
+  document.getElementById('cdDays').textContent = String(Math.floor(diff / (1000*60*60*24))).padStart(2,'0');
+  document.getElementById('cdHours').textContent = String(Math.floor((diff % (1000*60*60*24)) / (1000*60*60))).padStart(2,'0');
+  document.getElementById('cdMins').textContent = String(Math.floor((diff % (1000*60*60)) / (1000*60))).padStart(2,'0');
+  document.getElementById('cdSecs').textContent = String(Math.floor((diff % (1000*60)) / 1000)).padStart(2,'0');
+}
+setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>

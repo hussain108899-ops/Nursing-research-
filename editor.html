@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NRIF Visual Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--t:#0a6e72;--tl:#14a8ad;--g:#c49a2a;--gl:#f0c84e;--dk:#0d1f22;--tx:#f4f0ea;--mu:#a8bfc1;--b2:#0f2629;--rd:#e05252;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--dk);color:var(--tx);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+.bar{height:50px;background:rgba(13,31,34,0.99);border-bottom:1px solid rgba(20,168,173,0.2);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;}
+.bar-logo{font-weight:700;color:var(--gl);font-size:0.95rem;}
+.bar-badge{background:rgba(10,110,114,0.2);border:1px solid rgba(20,168,173,0.3);color:var(--tl);font-size:0.65rem;padding:2px 8px;border-radius:100px;}
+.bar-acts{margin-left:auto;display:flex;gap:8px;}
+.btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--mu);padding:5px 12px;border-radius:6px;font-size:0.75rem;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.btn:hover{border-color:var(--tl);color:var(--tl);}
+.btn.g{background:rgba(196,154,42,0.15);border-color:var(--g);color:var(--gl);}
+.layout{display:flex;flex:1;overflow:hidden;}
+.side{width:310px;flex-shrink:0;background:var(--b2);border-right:1px solid rgba(20,168,173,0.15);display:flex;flex-direction:column;overflow:hidden;}
+.side-body{flex:1;overflow-y:auto;padding:14px;}
+.fg{margin-bottom:10px;}
+.fg label{display:block;font-size:0.67rem;font-weight:600;color:var(--mu);margin-bottom:4px;text-transform:uppercase;}
+.fg input,.fg textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 10px;color:var(--tx);font-size:0.82rem;outline:none;}
+.sbtn{background:var(--t);color:white;border:none;padding:8px 14px;border-radius:7px;font-weight:600;font-size:0.78rem;cursor:pointer;width:100%;transition:background 0.2s;}
+.preview{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.preview-bar{padding:6px 12px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(20,168,173,0.1);display:flex;align-items:center;gap:8px;}
+.url-bar{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:50px;padding:4px 12px;color:var(--mu);font-size:0.71rem;}
+.preview-frame{flex:1;border:none;background:white;}
+#toast{position:fixed;bottom:16px;right:16px;background:rgba(13,31,34,0.97);border:1px solid rgba(20,168,173,0.3);color:var(--tl);padding:8px 16px;border-radius:100px;font-size:0.77rem;z-index:9999;display:none;}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="bar-logo">NRIF 2026</span>
+  <span class="bar-badge">Quick Visual Editor</span>
+  <div class="bar-acts">
+    <button class="btn" onclick="reloadPreview()">↺ Reload Preview</button>
+    <a href="index.html" target="_blank" class="btn">↗ Open Site</a>
+  </div>
+</div>
+<div class="layout">
+  <div class="side">
+    <div class="side-body">
+      <div style="font-size:0.75rem; color:var(--mu); margin-bottom:14px;">Edit high-level announcement settings synchronized across all active views.</div>
+      <div class="fg">
+        <label>Global Live Announcement Tag</label>
+        <input type="text" id="announceTag" placeholder="e.g. Important Announcement"/>
+      </div>
+      <div class="fg">
+        <label>Announcement Heading</label>
+        <input type="text" id="announceHead" placeholder="e.g. Registration Extensions"/>
+      </div>
+      <div class="fg">
+        <label>Details Body</label>
+        <textarea id="announceBody" style="min-height:90px;" placeholder="Write specific update descriptions..."></textarea>
+      </div>
+      <button class="sbtn" onclick="saveGlobalAnnounce()">💾 Publish Updates Online</button>
+    </div>
+  </div>
+  <div class="preview">
+    <div class="preview-bar">
+      <div class="url-bar">Live View IFrame Render Container (index.html)</div>
+    </div>
+    <iframe class="preview-frame" id="frame" src="index.html"></iframe>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbvGRvon0z2MbVJwLhfJvCl1XOv8rk3Oa_25cv8swh3QwZRfOSl7XuiLgv1N_TKbACaQbA/exec";
+
+window.addEventListener('load', () => {
+  fetch(SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+      if (data.settings) {
+        document.getElementById('announceTag').value = data.settings.annTag || '';
+        document.getElementById('announceHead').value = data.settings.annHead || '';
+        document.getElementById('announceBody').value = data.settings.annBody || '';
+      }
+    });
+});
+
+function saveGlobalAnnounce() {
+  const tag = document.getElementById('announceTag').value;
+  const head = document.getElementById('announceHead').value;
+  const body = document.getElementById('announceBody').value;
+
+  showToast('⏳ Syncing deployment payload...');
+  
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      action: 'updateContent',
+      settings: { annTag: tag, annHead: head, annBody: body }
+    })
+  }).then(() => {
+    showToast('✅ Settings operational in public sheets!');
+    reloadPreview();
+  });
+}
+
+function reloadPreview() {
+  document.getElementById('frame').src = 'index.html';
+  showToast('↺ Preview reloaded');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none',2200);
+}
+</script>
+</body>
+</html>
