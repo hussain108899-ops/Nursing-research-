@@ -1869,6 +1869,42 @@ function toggleComm(i) {
 
 renderCommittees();
 
+
+// ── REGISTRATION CONTROL ──
+function checkRegStatus() {
+  const regOpen  = new Date('2026-06-03T08:00:00+03:00');
+  const regClose = new Date('2026-06-03T14:30:00+03:00');
+  const now = new Date();
+  const regBtns = document.querySelectorAll('a[onclick*="openReg"], button[onclick*="openReg"]');
+
+  if (now < regOpen) {
+    // Before event - show "Coming Soon"
+    regBtns.forEach(btn => {
+      btn.style.pointerEvents = 'none';
+      btn.style.opacity = '0.6';
+      btn.textContent = 'Registration Opens Soon';
+    });
+  } else if (now >= regOpen && now < regClose) {
+    // Event in progress - registration open
+    regBtns.forEach(btn => {
+      btn.style.pointerEvents = '';
+      btn.style.opacity = '1';
+      if (!btn.getAttribute('onclick')) btn.setAttribute('onclick', 'openReg()');
+      btn.textContent = btn.tagName === 'A' ? 'Register Now' : 'Register Now';
+    });
+  } else {
+    // After 2PM - closed
+    regBtns.forEach(btn => {
+      btn.style.pointerEvents = 'none';
+      btn.style.opacity = '0.5';
+      btn.textContent = 'Registration Closed';
+      btn.removeAttribute('onclick');
+    });
+  }
+}
+checkRegStatus();
+setInterval(checkRegStatus, 30000);
+
 // ── TOAST ──
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 
