@@ -555,16 +555,7 @@
     .ft-logos img { height:36px; object-fit:contain; opacity:0.95; }
     .ft-copy { color:var(--muted); font-size:0.75rem; }
 
-    /* ── COUNTDOWN ── */
-    .countdown { margin-top:44px; }
-    .cd-label { font-size:0.68rem; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:12px; }
-    .cd-boxes { display:flex; align-items:center; gap:8px; justify-content:center; }
-    .cd-box { background:rgba(13,138,143,0.12); border:1px solid rgba(13,138,143,0.25); border-radius:12px; padding:12px 18px; min-width:68px; text-align:center; transition:all 0.3s; }
-    .cd-box:hover { background:rgba(13,138,143,0.25); transform:translateY(-2px); }
-    .cd-num { font-family:'Playfair Display',serif; font-size:1.7rem; font-weight:700; color:var(--teal-ll); line-height:1; transition:all 0.2s; }
-    .cd-num.tick { transform:scale(1.15); color:var(--gold-l); }
-    .cd-unit { font-size:0.58rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-top:3px; }
-    .cd-sep { font-size:1.3rem; color:var(--muted); margin-bottom:16px; }
+    
 
     /* ── SECRET ADMIN ── */
     .admin-modal {
@@ -955,24 +946,15 @@
       <div style="height:1px;background:rgba(255,255,255,0.2);margin-bottom:20px;"></div>
       <p class="hero-theme" style="font-size:1.1rem;color:rgba(255,255,255,0.85);font-style:italic;">"Transforming Healthcare Through Research, Innovation, and Multidisciplinary Clinical Impact"</p>
     </div>
+    <div class="hero-stats" style="margin-bottom:32px;"><div class="hs-item"><div class="hs-val">3rd</div><div class="hs-lbl">Annual Edition</div></div>
     <div class="hero-btns">
       <a href="#" onclick="openReg()" class="btn-p">Register Now</a>
       <a href="#agenda" class="btn-o">View Agenda</a>
     </div>
-    <div class="countdown">
-      <div class="cd-label">Event starts in</div>
-      <div class="cd-boxes">
-        <div class="cd-box"><div class="cd-num" id="cdD">--</div><div class="cd-unit">Days</div></div>
-        <div class="cd-sep">:</div>
-        <div class="cd-box"><div class="cd-num" id="cdH">--</div><div class="cd-unit">Hours</div></div>
-        <div class="cd-sep">:</div>
-        <div class="cd-box"><div class="cd-num" id="cdM">--</div><div class="cd-unit">Mins</div></div>
-        <div class="cd-sep">:</div>
-        <div class="cd-box"><div class="cd-num" id="cdS">--</div><div class="cd-unit">Secs</div></div>
+    </div>
       </div>
     </div>
-    <div class="hero-stats" style="margin-top:36px;">
-      <div class="hs-item"><div class="hs-val">3rd</div><div class="hs-lbl">Annual Edition</div></div>
+    
       <div class="hs-item"><div class="hs-val">Wed</div><div class="hs-lbl">June 3, 2026</div></div>
       <div class="hs-item"><div class="hs-val">2</div><div class="hs-lbl">Panel Discussions</div></div>
       <div class="hs-item"><div class="hs-val">9+</div><div class="hs-lbl">Excellence Partners</div></div>
@@ -1413,7 +1395,7 @@
     <div class="stag reveal">Get in Touch</div>
     <h2 class="stitle reveal">Contact Us</h2>
     <div class="sdivider reveal"></div>
-    <div class="contact-grid">
+<div class="contact-grid">
       <div class="cc reveal d1" style="cursor:pointer;" onclick="window.open('https://maps.app.goo.gl/Mbi1r8FoZfhEZpqi8?g_st=ipc','_blank')">
         <div class="cc-icon"></div>
         <h4>Location</h4>
@@ -1468,7 +1450,6 @@
         <div class="fg"><label>Email <span class="req">*</span></label><input type="email" id="em" placeholder="name@example.com"/></div>
         <div class="fg"><label>Affiliation <span class="req">*</span></label><select id="af"><option value="">Select</option><option>Faculty Member</option><option>Researcher</option><option>Healthcare Professional</option><option>PhD Student</option><option>MSc Student</option><option>Undergraduate Student</option><option>Other</option></select></div>
         <div class="fg"><label>Institution <span class="req">*</span></label><div class="radio-col"><label class="rl"><input type="radio" name="inst" value="IAU" checked/>Imam Abdulrahman Bin Faisal University (IAU)</label><label class="rl"><input type="radio" name="inst" value="Other"/>Other</label></div></div>
-        <div class="fg"><label>SCFHS Number <span style="color:var(--muted);font-weight:400;">(optional)</span></label><input type="text" id="sc" placeholder="SCFHS number"/></div>
         <div class="fnav"><div></div><button class="btn-next" onclick="goStep(2)">Next →</button></div>
       </div>
       <!-- Step 2 -->
@@ -1543,19 +1524,7 @@ document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el=>ro.observe(
 function toggleFab(){document.getElementById('fab').classList.toggle('open');document.getElementById('floatNav').classList.toggle('open');}
 function closeFab(){document.getElementById('fab').classList.remove('open');document.getElementById('floatNav').classList.remove('open');}
 
-// ── COUNTDOWN ──
-function updateCD(){
-  const ev=new Date('2026-06-03T08:30:00');const now=new Date();const diff=ev-now;
-  if(diff<=0)return;
-  const f=n=>String(Math.floor(n)).padStart(2,'0');
-  const d=diff/(1000*60*60*24),h=(diff%(1000*60*60*24))/(1000*60*60),m=(diff%(1000*60*60))/(1000*60),s=(diff%(1000*60))/1000;
-  document.getElementById('cdD').textContent=f(d);
-  document.getElementById('cdH').textContent=f(h);
-  document.getElementById('cdM').textContent=f(m);
-  const se=document.getElementById('cdS');se.classList.add('tick');setTimeout(()=>se.classList.remove('tick'),200);
-  se.textContent=f(s);
-}
-updateCD();setInterval(updateCD,1000);
+
 
 // ── REGISTRATION ──
 let curStep=1;
@@ -1596,7 +1565,7 @@ async function submitReg(){
     email:document.getElementById('em').value.trim(),
     affiliation:document.getElementById('af').value,
     institution:document.querySelector('input[name="inst"]:checked')?.value||'',
-    scfhs:document.getElementById('sc').value.trim(),
+    
     presenting:document.querySelector('input[name="pres"]:checked')?.value||'',
     hearAbout:document.getElementById('ha').value.trim(),
     consentEmail:document.getElementById('ce').checked,
@@ -1759,6 +1728,7 @@ const committees = [
       {pos:"Student", name:"Reem Al Otaibi", note:""},
       {pos:"Student", name:"Hashim Al Shaber", note:""},
       {pos:"Student", name:"Abdullah Al Turifi", note:""},
+      {pos:"Student", name:"Hassan Al Aseel", note:""},
     ]
   },
   {
@@ -1823,6 +1793,8 @@ const committees = [
       {pos:"Student", name:"Raghad Al Seihati", note:""},
       {pos:"Student", name:"Hashim Al Aseel", note:""},
             {pos:"Student", name:"Firas Al Bahrani", note:""},
+      {pos:"Student", name:"Maryam Khalitet", note:""},
+      {pos:"Student", name:"Lujain Almousa", note:""},
     ]
   },
   {
